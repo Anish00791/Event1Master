@@ -50,6 +50,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   role: true
 }).extend({
   role: z.enum(['organizer', 'participant'])
+    .refine(val => ['organizer', 'participant'].includes(val), {
+      message: "Role must be either 'organizer' or 'participant'"
+    })
 });
 
 export const insertEventSchema = createInsertSchema(events).pick({

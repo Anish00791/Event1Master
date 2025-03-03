@@ -89,9 +89,9 @@ export default function AuthPage() {
                   <div>
                     <Label>Account Type</Label>
                     <RadioGroup
-                      defaultValue="participant"
+                      defaultValue={registerForm.getValues("role")}
                       className="grid grid-cols-2 gap-4 mt-2"
-                      {...registerForm.register("role")}
+                      onValueChange={(value) => registerForm.setValue("role", value as "organizer" | "participant")}
                     >
                       <div>
                         <RadioGroupItem
