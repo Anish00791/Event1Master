@@ -11,6 +11,9 @@ export default function NavBar() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/">
+            <div className="font-bold text-xl mr-6">EventMaster</div>
+          </Link>
+          <Link href="/">
             <Button variant="ghost" className="flex items-center">
               <Home className="h-5 w-5 mr-2" />
               Home
