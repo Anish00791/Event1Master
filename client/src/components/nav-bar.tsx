@@ -13,7 +13,7 @@ export default function NavBar() {
           <Link href="/">
             <div className="flex items-center gap-2">
               <Trophy className="h-6 w-6 text-primary" />
-              <div className="font-bold text-xl mr-6 bg-gradient-to-r from-primary to-primary/70 text-transparent bg-clip-text">EventMaster</div>
+              <div className="font-bold text-xl mr-6 bg-gradient-to-r from-primary via-accent to-primary/80 text-transparent bg-clip-text drop-shadow-sm">EventMaster</div>
             </div>
           </Link>
           <Link href="/">

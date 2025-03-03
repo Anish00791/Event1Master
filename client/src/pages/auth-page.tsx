@@ -170,11 +170,11 @@ export default function AuthPage() {
         </Card>
       </div>
 
-      <div className="hidden md:flex flex-col justify-center p-8 bg-primary text-primary-foreground">
+      <div className="hidden md:flex flex-col justify-center p-8 bg-gradient-to-b from-primary to-accent text-primary-foreground">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-3 mb-6">
-            <Trophy className="h-12 w-12" />
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">EventMaster</h1>
+            <Trophy className="h-12 w-12 text-primary-foreground" />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary-foreground to-primary-foreground/80 text-transparent bg-clip-text drop-shadow-md">EventMaster</h1>
           </div>
           <p className="text-lg opacity-90">
             Your all-in-one platform for managing coding contests and hackathons.
