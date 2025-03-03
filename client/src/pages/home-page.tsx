@@ -4,12 +4,12 @@ import { Event } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Plus, Calendar, Trophy } from "lucide-react";
+import { Plus, Calendar, Trophy, LogOut } from "lucide-react";
 import EventForm from "@/components/event-form";
 import { useState } from "react";
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { user, logoutMutation } = useAuth();
   const [showEventForm, setShowEventForm] = useState(false);
 
   const { data: events = [] } = useQuery<Event[]>({
@@ -27,12 +27,18 @@ export default function HomePage() {
               : "Join exciting coding contests and hackathons"}
           </p>
         </div>
-        {user?.role === "organizer" && (
-          <Button onClick={() => setShowEventForm(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Event
+        <div className="flex gap-4 items-center">
+          {user?.role === "organizer" && (
+            <Button onClick={() => setShowEventForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Event
+            </Button>
+          )}
+          <Button variant="outline" onClick={() => logoutMutation.mutate()}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
           </Button>
-        )}
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

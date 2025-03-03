@@ -7,13 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import TeamList from "@/components/team-list";
 import { useAuth } from "@/hooks/use-auth";
-import { Users, Trophy, Award } from "lucide-react";
+import { Users, Trophy, Award, LogOut } from "lucide-react";
 import CertificateGenerator from "@/components/certificate-generator";
 
 export default function EventPage() {
   const [, params] = useRoute("/events/:id");
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, logoutMutation } = useAuth();
 
   const { data: event } = useQuery<Event>({
     queryKey: [`/api/events/${params?.id}`],
@@ -53,9 +53,15 @@ export default function EventPage() {
 
   return (
     <div className="container mx-auto p-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">{event.title}</h1>
-        <p className="text-muted-foreground">{event.description}</p>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">{event.title}</h1>
+          <p className="text-muted-foreground">{event.description}</p>
+        </div>
+        <Button variant="outline" onClick={() => logoutMutation.mutate()}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
