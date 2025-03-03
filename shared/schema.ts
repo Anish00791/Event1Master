@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -7,7 +7,8 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   name: text("name").notNull(),
-  email: text("email").notNull()
+  email: text("email").notNull(),
+  role: text("role").notNull() // Either 'organizer' or 'participant'
 });
 
 export const events = pgTable("events", {
@@ -45,7 +46,10 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   name: true,
-  email: true
+  email: true,
+  role: true
+}).extend({
+  role: z.enum(['organizer', 'participant'])
 });
 
 export const insertEventSchema = createInsertSchema(events).pick({

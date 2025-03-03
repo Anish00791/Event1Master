@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema } from "@shared/schema";
@@ -27,6 +28,7 @@ export default function AuthPage() {
       password: "",
       name: "",
       email: "",
+      role: "participant" as const,
     },
   });
 
@@ -85,6 +87,41 @@ export default function AuthPage() {
                   )}
                 >
                   <div className="space-y-4">
+                    <div>
+                      <Label>Account Type</Label>
+                      <RadioGroup
+                        defaultValue="participant"
+                        className="grid grid-cols-2 gap-4 mt-2"
+                        {...registerForm.register("role")}
+                      >
+                        <div>
+                          <RadioGroupItem
+                            value="participant"
+                            id="participant"
+                            className="peer sr-only"
+                          />
+                          <Label
+                            htmlFor="participant"
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                          >
+                            <span>Participant</span>
+                          </Label>
+                        </div>
+                        <div>
+                          <RadioGroupItem
+                            value="organizer"
+                            id="organizer"
+                            className="peer sr-only"
+                          />
+                          <Label
+                            htmlFor="organizer"
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                          >
+                            <span>Organizer</span>
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
                     <div>
                       <Label htmlFor="register-name">Name</Label>
                       <Input
