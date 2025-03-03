@@ -1,6 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
@@ -13,9 +13,12 @@ import AnalyticsPage from "@/pages/analytics-page";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  const [location] = useLocation();
+  const isAuthPage = location === "/auth";
+
   return (
     <>
-      <NavBar />
+      {!isAuthPage && <NavBar />}
       <Switch>
         <ProtectedRoute path="/" component={HomePage} />
         <ProtectedRoute path="/events/:id" component={EventPage} />
