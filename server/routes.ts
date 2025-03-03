@@ -21,6 +21,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(event);
   });
 
+  app.get("/api/registrations", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const registrations = await storage.getAllRegistrations();
+    res.json(registrations);
+  });
+
   app.post("/api/events", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     if (req.user.role !== 'organizer') return res.status(403).json({ message: "Only organizers can create events" });

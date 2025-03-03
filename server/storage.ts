@@ -45,6 +45,10 @@ export class MemStorage implements IStorage {
     return Array.from(this.events.values());
   }
 
+  async getAllRegistrations(): Promise<Registration[]> {
+    return Array.from(this.registrations.values());
+  }
+
   async createEvent(event: Omit<Event, "id">): Promise<Event> {
     const id = this.currentId++;
     const newEvent = { ...event, id };

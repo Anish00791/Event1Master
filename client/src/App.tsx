@@ -4,20 +4,26 @@ import { Switch, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "./lib/protected-route";
+import NavBar from "@/components/nav-bar";
 
 import HomePage from "@/pages/home-page";
 import EventPage from "@/pages/event-page";
 import AuthPage from "@/pages/auth-page";
+import AnalyticsPage from "@/pages/analytics-page";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
-    <Switch>
-      <ProtectedRoute path="/" component={HomePage} />
-      <ProtectedRoute path="/events/:id" component={EventPage} />
-      <Route path="/auth" component={AuthPage} />
-      <Route component={NotFound} />
-    </Switch>
+    <>
+      <NavBar />
+      <Switch>
+        <ProtectedRoute path="/" component={HomePage} />
+        <ProtectedRoute path="/events/:id" component={EventPage} />
+        <ProtectedRoute path="/analytics" component={AnalyticsPage} />
+        <Route path="/auth" component={AuthPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </>
   );
 }
 
