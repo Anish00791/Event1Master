@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,31 +52,30 @@ export default function AuthPage() {
                   onSubmit={loginForm.handleSubmit((data) =>
                     loginMutation.mutate(data)
                   )}
+                  className="space-y-4"
                 >
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="username">Username</Label>
-                      <Input
-                        id="username"
-                        {...loginForm.register("username")}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        {...loginForm.register("password")}
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={loginMutation.isPending}
-                    >
-                      Login
-                    </Button>
+                  <div>
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      {...loginForm.register("username")}
+                    />
                   </div>
+                  <div>
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      {...loginForm.register("password")}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={loginMutation.isPending}
+                  >
+                    Login
+                  </Button>
                 </form>
               </TabsContent>
 
@@ -85,81 +84,85 @@ export default function AuthPage() {
                   onSubmit={registerForm.handleSubmit((data) =>
                     registerMutation.mutate(data)
                   )}
+                  className="space-y-4"
                 >
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Account Type</Label>
-                      <RadioGroup
-                        defaultValue="participant"
-                        className="grid grid-cols-2 gap-4 mt-2"
-                        {...registerForm.register("role")}
-                      >
-                        <div>
-                          <RadioGroupItem
-                            value="participant"
-                            id="participant"
-                            className="peer sr-only"
-                          />
-                          <Label
-                            htmlFor="participant"
-                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <span>Participant</span>
-                          </Label>
-                        </div>
-                        <div>
-                          <RadioGroupItem
-                            value="organizer"
-                            id="organizer"
-                            className="peer sr-only"
-                          />
-                          <Label
-                            htmlFor="organizer"
-                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                          >
-                            <span>Organizer</span>
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                    <div>
-                      <Label htmlFor="register-name">Name</Label>
-                      <Input
-                        id="register-name"
-                        {...registerForm.register("name")}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="register-email">Email</Label>
-                      <Input
-                        id="register-email"
-                        type="email"
-                        {...registerForm.register("email")}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="register-username">Username</Label>
-                      <Input
-                        id="register-username"
-                        {...registerForm.register("username")}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="register-password">Password</Label>
-                      <Input
-                        id="register-password"
-                        type="password"
-                        {...registerForm.register("password")}
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={registerMutation.isPending}
+                  <div>
+                    <Label>Account Type</Label>
+                    <RadioGroup
+                      defaultValue="participant"
+                      className="grid grid-cols-2 gap-4 mt-2"
+                      {...registerForm.register("role")}
                     >
-                      Register
-                    </Button>
+                      <div>
+                        <RadioGroupItem
+                          value="participant"
+                          id="participant"
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor="participant"
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                          <span>Participant</span>
+                        </Label>
+                      </div>
+                      <div>
+                        <RadioGroupItem
+                          value="organizer"
+                          id="organizer"
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor="organizer"
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                          <span>Organizer</span>
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
+                  <div>
+                    <Label htmlFor="register-name">Name</Label>
+                    <Input
+                      id="register-name"
+                      {...registerForm.register("name")}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="register-email">Email</Label>
+                    <Input
+                      id="register-email"
+                      type="email"
+                      {...registerForm.register("email")}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="register-username">Username</Label>
+                    <Input
+                      id="register-username"
+                      {...registerForm.register("username")}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="register-password">Password</Label>
+                    <Input
+                      id="register-password"
+                      type="password"
+                      {...registerForm.register("password")}
+                    />
+                  </div>
+                  {registerForm.formState.errors.root?.message && (
+                    <p className="text-sm text-destructive">
+                      {registerForm.formState.errors.root.message}
+                    </p>
+                  )}
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={registerMutation.isPending}
+                  >
+                    Register
+                  </Button>
                 </form>
               </TabsContent>
             </Tabs>
