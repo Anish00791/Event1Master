@@ -172,8 +172,10 @@ export default function AuthPage() {
 
       <div className="hidden md:flex flex-col justify-center p-8 bg-primary text-primary-foreground">
         <div className="max-w-md mx-auto">
-          <Trophy className="h-12 w-12 mb-4" />
-          <h1 className="text-4xl font-bold mb-4">Event Master</h1>
+          <div className="flex items-center gap-3 mb-6">
+            <Trophy className="h-12 w-12" />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-white to-gray-300 text-transparent bg-clip-text">EventMaster</h1>
+          </div>
           <p className="text-lg opacity-90">
             Your all-in-one platform for managing coding contests and hackathons.
             Create events, form teams, and track progress in real-time.

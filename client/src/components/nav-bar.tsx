@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { Home, ChartBar, LogOut } from "lucide-react";
+import { Home, ChartBar, LogOut, Trophy } from "lucide-react";
 
 export default function NavBar() {
   const { user, logoutMutation } = useAuth();
@@ -11,7 +11,10 @@ export default function NavBar() {
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/">
-            <div className="font-bold text-xl mr-6">EventMaster</div>
+            <div className="flex items-center gap-2">
+              <Trophy className="h-6 w-6 text-primary" />
+              <div className="font-bold text-xl mr-6 bg-gradient-to-r from-primary to-primary/70 text-transparent bg-clip-text">EventMaster</div>
+            </div>
           </Link>
           <Link href="/">
             <Button variant="ghost" className="flex items-center">
