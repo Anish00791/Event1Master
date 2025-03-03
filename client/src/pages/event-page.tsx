@@ -6,11 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import TeamList from "@/components/team-list";
-import { Users, Trophy } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { Users, Trophy, Award } from "lucide-react";
+import CertificateGenerator from "@/components/certificate-generator";
 
 export default function EventPage() {
   const [, params] = useRoute("/events/:id");
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const { data: event } = useQuery<Event>({
     queryKey: [`/api/events/${params?.id}`],
@@ -45,6 +48,9 @@ export default function EventPage() {
 
   if (!event) return null;
 
+  const isOrganizer = user?.role === "organizer";
+  const isEventCreator = event.creatorId === user?.id;
+
   return (
     <div className="container mx-auto p-8">
       <div className="mb-8">
@@ -74,15 +80,23 @@ export default function EventPage() {
                 <dt className="font-medium">Max Team Size</dt>
                 <dd>{event.maxTeamSize} members</dd>
               </div>
+              {isEventCreator && (
+                <div>
+                  <dt className="font-medium">Status</dt>
+                  <dd className="text-primary">You are the organizer</dd>
+                </div>
+              )}
             </dl>
 
-            <Button
-              className="mt-4 w-full"
-              onClick={() => registerMutation.mutate()}
-              disabled={registerMutation.isPending}
-            >
-              Register for Event
-            </Button>
+            {!isOrganizer && (
+              <Button
+                className="mt-4 w-full"
+                onClick={() => registerMutation.mutate()}
+                disabled={registerMutation.isPending}
+              >
+                Register for Event
+              </Button>
+            )}
           </CardContent>
         </Card>
 
@@ -94,10 +108,24 @@ export default function EventPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <TeamList teams={teams} eventId={event.id} />
+            <TeamList teams={teams} eventId={event.id} isOrganizer={isEventCreator} />
           </CardContent>
         </Card>
       </div>
+
+      {!isOrganizer && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Award className="mr-2 h-5 w-5" />
+              Certificate
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CertificateGenerator event={event} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

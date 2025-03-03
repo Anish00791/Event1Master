@@ -4,7 +4,7 @@ import { Event } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Plus, Calendar } from "lucide-react";
+import { Plus, Calendar, Trophy } from "lucide-react";
 import EventForm from "@/components/event-form";
 import { useState } from "react";
 
@@ -22,13 +22,17 @@ export default function HomePage() {
         <div>
           <h1 className="text-3xl font-bold">Welcome, {user?.name}!</h1>
           <p className="text-muted-foreground">
-            Manage your coding contests and hackathons
+            {user?.role === "organizer" 
+              ? "Manage your coding contests and hackathons"
+              : "Join exciting coding contests and hackathons"}
           </p>
         </div>
-        <Button onClick={() => setShowEventForm(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Event
-        </Button>
+        {user?.role === "organizer" && (
+          <Button onClick={() => setShowEventForm(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Event
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -37,7 +41,11 @@ export default function HomePage() {
             <Card className="cursor-pointer hover:bg-accent/5">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Calendar className="mr-2 h-5 w-5" />
+                  {event.creatorId === user?.id ? (
+                    <Trophy className="mr-2 h-5 w-5 text-primary" />
+                  ) : (
+                    <Calendar className="mr-2 h-5 w-5" />
+                  )}
                   {event.title}
                 </CardTitle>
               </CardHeader>
@@ -54,6 +62,11 @@ export default function HomePage() {
                     End:{" "}
                     {new Date(event.endDate).toLocaleDateString()}
                   </p>
+                  {event.creatorId === user?.id && (
+                    <p className="text-primary font-medium mt-2">
+                      You are the organizer
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -61,7 +74,9 @@ export default function HomePage() {
         ))}
       </div>
 
-      <EventForm open={showEventForm} onOpenChange={setShowEventForm} />
+      {user?.role === "organizer" && (
+        <EventForm open={showEventForm} onOpenChange={setShowEventForm} />
+      )}
     </div>
   );
 }

@@ -13,17 +13,22 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Plus } from "lucide-react";
+import { Users, Plus, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function TeamList({
   teams,
   eventId,
+  isOrganizer,
 }: {
   teams: Team[];
   eventId: number;
+  isOrganizer: boolean;
 }) {
   const [showCreateTeam, setShowCreateTeam] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -68,24 +73,32 @@ export default function TeamList({
             className="flex items-center justify-between p-2 rounded-lg border"
           >
             <div className="flex items-center">
-              <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+              {team.leaderId === user?.id ? (
+                <Shield className="h-4 w-4 mr-2 text-primary" />
+              ) : (
+                <Users className="h-4 w-4 mr-2 text-muted-foreground" />
+              )}
               {team.name}
             </div>
-            <Button variant="outline" size="sm">
-              Join Team
-            </Button>
+            {!isOrganizer && (
+              <Button variant="outline" size="sm">
+                {team.leaderId === user?.id ? "Manage Team" : "Join Team"}
+              </Button>
+            )}
           </div>
         ))}
       </div>
 
-      <Button
-        variant="outline"
-        className="w-full mt-4"
-        onClick={() => setShowCreateTeam(true)}
-      >
-        <Plus className="h-4 w-4 mr-2" />
-        Create New Team
-      </Button>
+      {!isOrganizer && (
+        <Button
+          variant="outline"
+          className="w-full mt-4"
+          onClick={() => setShowCreateTeam(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Create New Team
+        </Button>
+      )}
 
       <Dialog open={showCreateTeam} onOpenChange={setShowCreateTeam}>
         <DialogContent>
