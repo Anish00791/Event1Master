@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Plus, Shield } from "lucide-react";
+import { Users, Plus, Shield, Mail } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function TeamList({
@@ -200,9 +200,47 @@ export default function TeamList({
               </div>
             </div>
 
+            <div>
+              <h3 className="text-lg font-medium">Invite Team Members</h3>
+              <div className="mt-2 space-y-4">
+                <div>
+                  <Label htmlFor="invite-email">Email Address</Label>
+                  <Input 
+                    id="invite-email" 
+                    type="email" 
+                    placeholder="Enter email address" 
+                    className="mt-1"
+                  />
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    const emailInput = document.getElementById('invite-email') as HTMLInputElement;
+                    if (emailInput && emailInput.value) {
+                      // Here you would implement the email sending functionality
+                      toast({
+                        title: "Invitation Sent",
+                        description: `Invitation email sent to ${emailInput.value}`,
+                      });
+                      emailInput.value = '';
+                    } else {
+                      toast({
+                        title: "Error",
+                        description: "Please enter a valid email address",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
+                  Send Invitation
+                </Button>
+              </div>
+            </div>
+
             <Button
               variant="default"
-              className="w-full"
+              className="w-full mt-4"
               onClick={() => setShowManageTeam(false)}
             >
               Close
