@@ -1,19 +1,22 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useRoute } from "wouter";
 import { Event, Team } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
 import TeamList from "@/components/team-list";
 import { useAuth } from "@/hooks/use-auth";
 import { Users, Trophy, Award, LogOut } from "lucide-react";
 import CertificateGenerator from "@/components/certificate-generator";
+import RegistrationDialog from "@/components/registration-dialog";
+import { useState } from "react";
 
 export default function EventPage() {
   const [, params] = useRoute("/events/:id");
   const { toast } = useToast();
   const { user, logoutMutation } = useAuth();
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [showCreateTeam, setShowCreateTeam] = useState(false);
 
   const { data: event } = useQuery<Event>({
     queryKey: [`/api/events/${params?.id}`],
@@ -21,29 +24,6 @@ export default function EventPage() {
 
   const { data: teams = [] } = useQuery<Team[]>({
     queryKey: [`/api/events/${params?.id}/teams`],
-  });
-
-  const registerMutation = useMutation({
-    mutationFn: async () => {
-      const res = await apiRequest(
-        "POST",
-        `/api/events/${params?.id}/register`
-      );
-      return res.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Successfully registered for the event",
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
   });
 
   if (!event) return null;
@@ -97,8 +77,7 @@ export default function EventPage() {
             {!isOrganizer && (
               <Button
                 className="mt-4 w-full"
-                onClick={() => registerMutation.mutate()}
-                disabled={registerMutation.isPending}
+                onClick={() => setShowRegistration(true)}
               >
                 Register for Event
               </Button>
@@ -114,7 +93,11 @@ export default function EventPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <TeamList teams={teams} eventId={event.id} isOrganizer={isEventCreator} />
+            <TeamList 
+              teams={teams} 
+              eventId={event.id} 
+              isOrganizer={isEventCreator} 
+            />
           </CardContent>
         </Card>
       </div>
@@ -132,6 +115,13 @@ export default function EventPage() {
           </CardContent>
         </Card>
       )}
+
+      <RegistrationDialog
+        open={showRegistration}
+        onOpenChange={setShowRegistration}
+        eventId={event.id}
+        onCreateTeam={() => setShowCreateTeam(true)}
+      />
     </div>
   );
 }

@@ -13,12 +13,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(events);
   });
 
+  app.get("/api/events/:id", async (req, res) => {
+    const eventId = parseInt(req.params.id);
+    const events = await storage.getAllEvents();
+    const event = events.find(e => e.id === eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    res.json(event);
+  });
+
   app.post("/api/events", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    
+    if (req.user.role !== 'organizer') return res.status(403).json({ message: "Only organizers can create events" });
+
     const parsed = insertEventSchema.parse(req.body);
     const event = await storage.createEvent({
       ...parsed,
+      startDate: new Date(parsed.startDate),
+      endDate: new Date(parsed.endDate),
       creatorId: req.user.id
     });
     res.json(event);
@@ -26,11 +37,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events/:eventId/register", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    
+    if (req.user.role === 'organizer') return res.status(403).json({ message: "Organizers cannot register for events" });
+
     const eventId = parseInt(req.params.eventId);
     const registration = await storage.createRegistration({
       eventId,
       userId: req.user.id,
+      teamId: null,
       status: "pending"
     });
     res.json(registration);
@@ -38,14 +51,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events/:eventId/teams", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
+    if (req.user.role === 'organizer') return res.status(403).json({ message: "Organizers cannot create teams" });
 
     const schema = z.object({
       name: z.string().min(1)
     });
-    
+
     const eventId = parseInt(req.params.eventId);
     const { name } = schema.parse(req.body);
-    
+
     const team = await storage.createTeam({
       name,
       eventId,
