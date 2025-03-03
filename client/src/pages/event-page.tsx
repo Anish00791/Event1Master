@@ -38,10 +38,6 @@ export default function EventPage() {
           <h1 className="text-4xl font-bold mb-2">{event.title}</h1>
           <p className="text-muted-foreground">{event.description}</p>
         </div>
-        <Button variant="outline" onClick={() => logoutMutation.mutate()}>
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

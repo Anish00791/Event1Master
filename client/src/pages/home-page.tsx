@@ -34,10 +34,6 @@ export default function HomePage() {
               Create Event
             </Button>
           )}
-          <Button variant="outline" onClick={() => logoutMutation.mutate()}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
         </div>
       </div>
 
