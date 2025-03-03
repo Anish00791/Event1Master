@@ -61,6 +61,12 @@ export const insertEventSchema = createInsertSchema(events).pick({
   startDate: true,
   endDate: true,
   maxTeamSize: true
+}).extend({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().min(1, "End date is required"),
+  maxTeamSize: z.number().min(1, "Team size must be at least 1")
 });
 
 export const insertTeamSchema = createInsertSchema(teams).pick({

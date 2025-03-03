@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +63,9 @@ export default function EventForm({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Event</DialogTitle>
+          <DialogDescription>
+            Fill in the details to create a new event.
+          </DialogDescription>
         </DialogHeader>
 
         <form
@@ -73,6 +77,11 @@ export default function EventForm({
           <div>
             <Label htmlFor="title">Title</Label>
             <Input id="title" {...form.register("title")} />
+            {form.formState.errors.title && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.title.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -81,6 +90,11 @@ export default function EventForm({
               id="description"
               {...form.register("description")}
             />
+            {form.formState.errors.description && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.description.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -90,6 +104,11 @@ export default function EventForm({
               type="datetime-local"
               {...form.register("startDate")}
             />
+            {form.formState.errors.startDate && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.startDate.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -99,6 +118,11 @@ export default function EventForm({
               type="datetime-local"
               {...form.register("endDate")}
             />
+            {form.formState.errors.endDate && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.endDate.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -109,6 +133,11 @@ export default function EventForm({
               min="1"
               {...form.register("maxTeamSize", { valueAsNumber: true })}
             />
+            {form.formState.errors.maxTeamSize && (
+              <p className="text-sm text-destructive">
+                {form.formState.errors.maxTeamSize.message}
+              </p>
+            )}
           </div>
 
           <Button
@@ -116,7 +145,7 @@ export default function EventForm({
             className="w-full"
             disabled={createEventMutation.isPending}
           >
-            Create Event
+            {createEventMutation.isPending ? "Creating..." : "Create Event"}
           </Button>
         </form>
       </DialogContent>
