@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRoute } from "wouter";
-import { Event, Team } from "@shared/schema";
+import { Event, Team, Registration } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -99,18 +99,38 @@ export default function EventPage() {
       </div>
 
       {!isOrganizer && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Award className="mr-2 h-5 w-5" />
-              Certificate
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CertificateGenerator event={event} />
-          </CardContent>
-        </Card>
+        <>
+          {/* Fetch registrations to check if user is registered */}
+          {useQuery({
+            queryKey: [`/api/registrations`],
+            select: (data: Registration[]) => {
+              // Check if user has registered for this event
+              const isRegistered = data.some(reg => 
+                reg.eventId === event.id && reg.userId === user?.id
+              );
+              
+              // Render certificate only if user is registered
+              if (isRegistered) {
+                return (
+                  <Card className="mt-6">
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Award className="mr-2 h-5 w-5" />
+                        Certificate
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <CertificateGenerator event={event} />
+                    </CardContent>
+                  </Card>
+                );
+              }
+              return null;
+            }
+          }).data}
+        </>
       )}
+</old_str>
 
       <RegistrationDialog
         open={showRegistration}
