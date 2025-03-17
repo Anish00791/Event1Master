@@ -1,0 +1,17 @@
+{
+  "users": {
+    "1": {
+      "username": "AnishMo",
+      "password": "0dac8a3329a322240df1a446a076b98f0c074bfef74f915ad177db0ebce03b6942955901877b5ce88b9a2252bb03552e636ad5fbb60afd54374f21754d32a478.db20fa93bc405a2af8c053c4691d774d",
+      "name": "Anish Mohanty",
+      "email": "anishmohanty112@gmail.com",
+      "role": "organizer",
+      "id": 1
+    }
+  },
+  "events": {},
+  "teams": {},
+  "teamMembers": {},
+  "registrations": {},
+  "currentId": 2
+}
