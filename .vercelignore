@@ -1,0 +1,32 @@
+# Ignore server files
+server
+server/**/*
+
+# Development directories and files
+node_modules
+.git
+.github
+.gitignore
+*.log
+.env
+.env.*
+!.env.example
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary files
+*.sqlite
+data/
+/data
+*.db
+
+# Exclude development typescript files (Vercel will handle compilation)
+*.ts
+!*.d.ts 

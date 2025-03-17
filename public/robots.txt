@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /server/
+Disallow: /api/
+Allow: /$
+Allow: /static/
+Allow: /assets/
+Allow: /images/ 

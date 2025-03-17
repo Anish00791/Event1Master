@@ -1,172 +1,218 @@
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertUserSchema } from "@shared/schema";
-import { Redirect } from "wouter";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trophy } from "lucide-react";
 
 export default function AuthPage() {
-  const { user, loginMutation, registerMutation } = useAuth();
-
-  const loginForm = useForm({
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
-
-  const registerForm = useForm({
-    resolver: zodResolver(insertUserSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      name: "",
-      email: "",
-      role: "participant" as const,
-    },
-  });
-
-  if (user) {
-    return <Redirect to="/" />;
-  }
-
+  const { login, register } = useAuth();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+  
+  // Login form state
+  const [loginUsername, setLoginUsername] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  
+  // Register form state
+  const [registerUsername, setRegisterUsername] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerRole, setRegisterRole] = useState<"organizer" | "participant">("participant");
+  const [isRegistering, setIsRegistering] = useState(false);
+  
+  // Handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    
+    try {
+      await login(loginUsername, loginPassword);
+      
+      toast({
+        title: "Login successful",
+        description: "Welcome back!",
+      });
+      
+      setLocation("/");
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+  
+  // Handle registration
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsRegistering(true);
+    
+    try {
+      await register(
+        registerUsername,
+        registerPassword,
+        registerName,
+        registerEmail,
+        registerRole
+      );
+      
+      toast({
+        title: "Registration successful",
+        description: "Your account has been created!",
+      });
+      
+      setLocation("/");
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+  
   return (
     <div className="min-h-screen grid md:grid-cols-2">
       <div className="flex items-center justify-center p-8">
         <Card className="w-full max-w-md">
-          <CardContent className="pt-6">
-            <Tabs defaultValue="login">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form
-                  onSubmit={loginForm.handleSubmit((data) =>
-                    loginMutation.mutate(data)
-                  )}
-                  className="space-y-4"
-                >
-                  <div>
-                    <Label htmlFor="username">Username</Label>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">Event Master</CardTitle>
+            <CardDescription className="text-center">
+              Sign in to your account or create a new one
+            </CardDescription>
+          </CardHeader>
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
+            </TabsList>
+            
+            {/* Login Tab */}
+            <TabsContent value="login">
+              <form onSubmit={handleLogin}>
+                <CardContent className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="login-username">Username</Label>
                     <Input
-                      id="username"
-                      {...loginForm.register("username")}
+                      id="login-username"
+                      type="text"
+                      placeholder="johndoe"
+                      value={loginUsername}
+                      onChange={(e) => setLoginUsername(e.target.value)}
+                      required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="password">Password</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="login-password">Password</Label>
                     <Input
-                      id="password"
+                      id="login-password"
                       type="password"
-                      {...loginForm.register("password")}
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      required
                     />
                   </div>
+                </CardContent>
+                <CardFooter>
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={loginMutation.isPending}
+                    disabled={isLoggingIn}
                   >
-                    Login
+                    {isLoggingIn ? "Logging in..." : "Login"}
                   </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="register">
-                <form
-                  onSubmit={registerForm.handleSubmit((data) =>
-                    registerMutation.mutate(data)
-                  )}
-                  className="space-y-4"
-                >
-                  <div>
-                    <Label>Account Type</Label>
-                    <RadioGroup
-                      defaultValue={registerForm.getValues("role")}
-                      className="grid grid-cols-2 gap-4 mt-2"
-                      onValueChange={(value) => registerForm.setValue("role", value as "organizer" | "participant")}
-                    >
-                      <div>
-                        <RadioGroupItem
-                          value="participant"
-                          id="participant"
-                          className="peer sr-only"
-                        />
-                        <Label
-                          htmlFor="participant"
-                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                        >
-                          <span>Participant</span>
-                        </Label>
-                      </div>
-                      <div>
-                        <RadioGroupItem
-                          value="organizer"
-                          id="organizer"
-                          className="peer sr-only"
-                        />
-                        <Label
-                          htmlFor="organizer"
-                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                        >
-                          <span>Organizer</span>
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  <div>
-                    <Label htmlFor="register-name">Name</Label>
+                </CardFooter>
+              </form>
+            </TabsContent>
+            
+            {/* Register Tab */}
+            <TabsContent value="register">
+              <form onSubmit={handleRegister}>
+                <CardContent className="space-y-4 pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="register-username">Username</Label>
                     <Input
-                      id="register-name"
-                      {...registerForm.register("name")}
+                      id="register-username"
+                      type="text"
+                      placeholder="johndoe"
+                      value={registerUsername}
+                      onChange={(e) => setRegisterUsername(e.target.value)}
+                      required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
+                    <Label htmlFor="register-name">Full Name</Label>
+                    <Input
+                      id="register-name"
+                      type="text"
+                      placeholder="John Doe"
+                      value={registerName}
+                      onChange={(e) => setRegisterName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="register-email">Email</Label>
                     <Input
                       id="register-email"
                       type="email"
-                      {...registerForm.register("email")}
+                      placeholder="john@example.com"
+                      value={registerEmail}
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                      required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="register-username">Username</Label>
-                    <Input
-                      id="register-username"
-                      {...registerForm.register("username")}
-                    />
-                  </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="register-password">Password</Label>
                     <Input
                       id="register-password"
                       type="password"
-                      {...registerForm.register("password")}
+                      value={registerPassword}
+                      onChange={(e) => setRegisterPassword(e.target.value)}
+                      required
                     />
                   </div>
-                  {registerForm.formState.errors.root?.message && (
-                    <p className="text-sm text-destructive">
-                      {registerForm.formState.errors.root.message}
-                    </p>
-                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="register-role">Role</Label>
+                    <Select
+                      value={registerRole}
+                      onValueChange={(value) => setRegisterRole(value as "organizer" | "participant")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="participant">Participant</SelectItem>
+                        <SelectItem value="organizer">Organizer</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+                <CardFooter>
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={registerMutation.isPending}
+                    disabled={isRegistering}
                   >
-                    Register
+                    {isRegistering ? "Creating account..." : "Create Account"}
                   </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
+                </CardFooter>
+              </form>
+            </TabsContent>
+          </Tabs>
         </Card>
       </div>
 
