@@ -1,54 +1,62 @@
-import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
-import { sqliteTable, text as sqliteText, integer as sqliteInteger } from "drizzle-orm/sqlite-core";
+import { mysqlTable, int, varchar, datetime, text } from 'drizzle-orm/mysql-core';
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Use only the PostgreSQL schema for now
-// This avoids accessing process.env which isn't available in the browser
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  name: text("name").notNull(),
-  email: text("email").notNull(),
-  role: text("role").notNull() // Either 'organizer' or 'participant'
+// Users table
+export const users = mysqlTable('users', {
+  id: int('id').autoincrement().primaryKey(),
+  username: varchar('username', { length: 255 }).notNull().unique(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  password: varchar('password', { length: 255 }).notNull(),
+  role: varchar('role', { length: 50 }).notNull().default('user'),
+  createdAt: datetime('created_at').notNull().default(new Date()),
+  updatedAt: datetime('updated_at').notNull().default(new Date()),
 });
 
-export const events = pgTable("events", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  maxTeamSize: integer("max_team_size").notNull(),
-  creatorId: integer("creator_id").notNull()
+// Events table
+export const events = mysqlTable('events', {
+  id: int('id').autoincrement().primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  startDate: datetime('start_date').notNull(),
+  endDate: datetime('end_date').notNull(),
+  location: varchar('location', { length: 255 }),
+  maxParticipants: int('max_participants'),
+  creatorId: int('creator_id').notNull().references(() => users.id),
+  createdAt: datetime('created_at').notNull().default(new Date()),
+  updatedAt: datetime('updated_at').notNull().default(new Date()),
 });
 
-export const teams = pgTable("teams", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  eventId: integer("event_id").notNull(),
-  leaderId: integer("leader_id").notNull()
+// Teams table
+export const teams = mysqlTable('teams', {
+  id: int('id').autoincrement().primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  eventId: int('event_id').notNull().references(() => events.id),
+  leaderId: int('leader_id').notNull().references(() => users.id),
+  createdAt: datetime('created_at').notNull().default(new Date()),
+  updatedAt: datetime('updated_at').notNull().default(new Date()),
 });
 
-export const teamMembers = pgTable("team_members", {
-  id: serial("id").primaryKey(),
-  teamId: integer("team_id").notNull(),
-  userId: integer("user_id").notNull()
+// Team Members table
+export const teamMembers = mysqlTable('team_members', {
+  id: int('id').autoincrement().primaryKey(),
+  teamId: int('team_id').notNull().references(() => teams.id),
+  userId: int('user_id').notNull().references(() => users.id),
+  role: varchar('role', { length: 50 }).notNull().default('member'),
+  joinedAt: datetime('joined_at').notNull().default(new Date()),
 });
 
-export const registrations = pgTable("registrations", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull(),
-  userId: integer("user_id").notNull(),
-  teamId: integer("team_id"),
-  status: text("status").notNull()
+export const registrations = mysqlTable("registrations", {
+  id: int('id').autoincrement().primaryKey(),
+  eventId: int('event_id').notNull().references(() => events.id),
+  userId: int('user_id').notNull().references(() => users.id),
+  teamId: int('team_id').references(() => teams.id),
+  status: varchar('status', { length: 50 }).notNull()
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
-  name: true,
   email: true,
   role: true
 }).extend({
@@ -63,13 +71,15 @@ export const insertEventSchema = createInsertSchema(events).pick({
   description: true,
   startDate: true,
   endDate: true,
-  maxTeamSize: true
+  location: true,
+  maxParticipants: true
 }).extend({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().min(1, "End date is required"),
-  maxTeamSize: z.number().min(1, "Team size must be at least 1")
+  location: z.string().min(1, "Location is required"),
+  maxParticipants: z.number().min(1, "Max participants must be at least 1")
 });
 
 export const insertTeamSchema = createInsertSchema(teams).pick({

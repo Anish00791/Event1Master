@@ -1,44 +1,57 @@
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./lib/queryClient";
-import { Switch, Route, useLocation } from "wouter";
-import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/hooks/use-auth";
-import { ProtectedRoute } from "./lib/protected-route";
-import NavBar from "@/components/nav-bar";
+import { useState, useEffect } from 'react'
 
-import HomePage from "@/pages/home-page";
-import EventPage from "@/pages/event-page";
-import AuthPage from "@/pages/auth-page";
-import AnalyticsPage from "@/pages/analytics-page";
-import NotFound from "@/pages/not-found";
-
-function Router() {
-  const [location] = useLocation();
-  const isAuthPage = location === "/auth";
-
-  return (
-    <>
-      {!isAuthPage && <NavBar />}
-      <Switch>
-        <ProtectedRoute path="/" component={HomePage} />
-        <ProtectedRoute path="/events/:id" component={EventPage} />
-        <ProtectedRoute path="/analytics" component={AnalyticsPage} />
-        <Route path="/auth" component={AuthPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </>
-  );
+interface HealthStatus {
+  status: string;
+  database?: string;
+  features?: string[];
+  mode?: string;
+  message?: string;
 }
 
 function App() {
+  const [healthStatus, setHealthStatus] = useState<HealthStatus>({ status: 'loading...' });
+  const [events, setEvents] = useState<any>(null);
+
+  useEffect(() => {
+    // Fetch API health data
+    fetch('/api/health')
+      .then(res => res.json())
+      .then(data => setHealthStatus(data))
+      .catch(err => {
+        console.error('Error fetching health status:', err);
+        setHealthStatus({ status: 'error', message: err.message });
+      });
+      
+    // Fetch events data
+    fetch('/api/events')
+      .then(res => res.json())
+      .then(data => setEvents(data))
+      .catch(err => {
+        console.error('Error fetching events:', err);
+      });
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router />
-        <Toaster />
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-8 text-center">Event Master Dashboard</h1>
+        
+        <div className="bg-white shadow rounded-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">API Status</h2>
+          <pre className="bg-gray-100 p-4 rounded overflow-auto">
+            {JSON.stringify(healthStatus, null, 2)}
+          </pre>
+        </div>
+        
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Events Data</h2>
+          <pre className="bg-gray-100 p-4 rounded overflow-auto">
+            {JSON.stringify(events, null, 2)}
+          </pre>
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export default App;
+export default App

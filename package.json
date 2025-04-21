@@ -3,16 +3,52 @@
   "version": "1.0.0",
   "description": "Event Management API for creating and managing events and teams",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "echo 'No build step required'",
-    "start": "node api/index.js"
+    "build": "tsc",
+    "start": "node dist/server/index.js",
+    "dev": "npx tsx server/index.ts",
+    "minimal": "npx tsx server/minimal.ts",
+    "migrate": "npx tsx server/run-migrations.ts"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.2"
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.42.0",
+    "drizzle-zod": "^0.7.1",
+    "express": "^5.1.0",
+    "express-mysql-session": "^3.0.3",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "memorystore": "^1.6.7",
+    "mysql2": "^3.14.0",
+    "nanoid": "^5.1.5",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "zod": "^3.24.3"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
+    "@replit/vite-plugin-shadcn-theme-json": "^0.0.4",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/express-mysql-session": "^3.0.6",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^22.14.1",
+    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
+    "@vitejs/plugin-react": "^4.4.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2"
+  }
 }

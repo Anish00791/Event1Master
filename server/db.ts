@@ -1,19 +1,27 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import * as schema from '../shared/schema';
-import { MemStorage } from './storage';
+import { DbStorage } from './db-storage';
 
 // Load environment variables
 dotenv.config();
 
-// We'll use in-memory storage for simplicity
-export const db = {};
+// Import MySQL database instance - we're using MySQL exclusively
+import { db as mysqlDb, runMigrations as runMySqlMigrations } from './db/mysql';
 
-// Use memory storage for the database operations
-export const storage = new MemStorage();
+// Use MySQL database instance
+export const db = mysqlDb;
 
-// No migrations needed for in-memory storage
+// Use database storage for operations with MySQL
+export const storage = new DbStorage();
+
+// Run MySQL migrations
 export async function runMigrations() {
-  console.log('Using in-memory storage, no migrations needed');
-  return Promise.resolve();
+  try {
+    await runMySqlMigrations();
+    console.log('MySQL database migrations completed successfully');
+  } catch (error) {
+    console.error('Error running MySQL database migrations:', error);
+    throw error;
+  }
 } 

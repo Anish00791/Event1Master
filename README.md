@@ -62,6 +62,57 @@ This application is configured for deployment on Vercel.
 
 4. Follow the prompts to deploy
 
+## MySQL Database Configuration
+
+This application uses MySQL as its primary database. Here's how to set it up:
+
+### Local Development
+
+1. Install MySQL locally or use a Docker container
+2. Create a database called `eventmaster`
+3. Update your `.env` file with the correct credentials:
+   ```
+   DATABASE_URL="mysql://username:password@localhost:3306/eventmaster"
+   DB_TYPE="mysql"
+   JWT_SECRET="your-secure-jwt-secret-key"
+   ```
+
+### Vercel Deployment
+
+When deploying to Vercel, you'll need to set up an external MySQL database, as Vercel doesn't provide MySQL hosting. Good options include:
+
+1. **PlanetScale** - Serverless MySQL platform compatible with Vercel
+2. **Amazon RDS** - AWS MySQL database service
+3. **Azure Database for MySQL** - Microsoft's MySQL offering
+4. **Google Cloud SQL** - Google's MySQL database service
+
+After setting up your database, update the `DATABASE_URL` in your Vercel environment variables to point to your production database.
+
+#### Deploying to Vercel
+
+Run one of the deployment scripts:
+
+```bash
+# On Linux/macOS
+./vercel-deploy.sh
+
+# On Windows
+vercel-deploy.bat
+```
+
+The script will:
+1. Generate a Vercel-compatible environment file
+2. Build the application
+3. Deploy to Vercel using your environment variables
+
+#### Important Database Notes for Vercel
+
+1. **Connection Pooling**: Since Vercel uses serverless functions, the database connection is established for each request. Using a connection pooling service like PlanetScale or adding a connection pooler can improve performance.
+
+2. **Migrations**: Database migrations don't run automatically in production. You'll need to run them manually or set up a CI/CD process.
+
+3. **Cold Starts**: Serverless functions can experience cold starts, which might delay the first database connection. Design your application to handle this gracefully.
+
 ## Project Structure
 
 - `/api` - Serverless API functions for Vercel
